@@ -1,40 +1,19 @@
 package com.aldegwin.budgetplanner.service;
 
 import com.aldegwin.budgetplanner.model.Income;
-import com.aldegwin.budgetplanner.repository.IncomeRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-public class IncomeService {
-    private final IncomeRepository incomeRepository;
+public interface IncomeService {
+    void saveIncome(Income income);
 
-    public IncomeService(IncomeRepository incomeRepository) {
-        this.incomeRepository = incomeRepository;
-    }
+    Optional<Income> findById(Long id);
 
-    public void saveIncome(Income income) {
-        incomeRepository.save(income);
-    }
+    Iterable<Income> findAll();
 
-    public Optional<Income> findById(Long id) {
-        return incomeRepository.findById(id);
-    }
+    void update(Income income);
 
-    public Iterable<Income> findAll() {
-        return incomeRepository.findAll();
-    }
+    void delete(Income income);
 
-    public void update(Income income) {
-        incomeRepository.save(income);
-    }
-
-    public void delete(Income income) {
-        incomeRepository.delete(income);
-    }
-
-    public void deleteById(Long id) {
-        incomeRepository.deleteById(id);
-    }
+    void deleteById(Long id);
 }

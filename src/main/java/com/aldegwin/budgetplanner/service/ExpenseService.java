@@ -1,40 +1,19 @@
 package com.aldegwin.budgetplanner.service;
 
 import com.aldegwin.budgetplanner.model.Expense;
-import com.aldegwin.budgetplanner.repository.ExpenseRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-public class ExpenseService {
-    private final ExpenseRepository expenseRepository;
+public interface ExpenseService {
+    void save(Expense expense);
 
-    public ExpenseService(ExpenseRepository expenseRepository) {
-        this.expenseRepository = expenseRepository;
-    }
+    Optional<Expense> findById(Long id);
 
-    public void save(Expense expense) {
-        expenseRepository.save(expense);
-    }
+    Iterable<Expense> findAll();
 
-    public Optional<Expense> findById(Long id) {
-        return expenseRepository.findById(id);
-    }
+    void update(Expense expense);
 
-    public Iterable<Expense> findAll() {
-        return expenseRepository.findAll();
-    }
+    void delete(Expense expense);
 
-    public void update(Expense expense) {
-        expenseRepository.save(expense);
-    }
-
-    public void delete(Expense expense) {
-        expenseRepository.delete(expense);
-    }
-
-    public void deleteById(Long id) {
-        expenseRepository.deleteById(id);
-    }
+    void deleteById(Long id);
 }
