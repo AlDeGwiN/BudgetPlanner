@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,4 +37,10 @@ public class Budget {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "budget")
+    private List<Income> incomes;
+
+    @OneToMany(mappedBy = "budget")
+    private List<Expense> expenses;
 }

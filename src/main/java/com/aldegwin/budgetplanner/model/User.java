@@ -35,10 +35,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Budget> budgets;
-
-    @OneToMany(mappedBy = "user")
-    private List<Expense> expenses;
-
-    @OneToMany(mappedBy = "user")
-    private List<Income> incomes;
 }

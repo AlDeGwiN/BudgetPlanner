@@ -31,8 +31,8 @@ public class Income {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
 
     @ManyToOne
     @JoinColumn(name = "income_type_id")
