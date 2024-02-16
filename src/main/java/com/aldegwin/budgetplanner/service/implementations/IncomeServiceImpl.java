@@ -16,8 +16,8 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public void saveIncome(Income income) {
-        incomeRepository.save(income);
+    public Income saveIncome(Income income) {
+        return incomeRepository.save(income);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public void update(Income income) {
-        incomeRepository.save(income);
+    public Income update(Income income) {
+        return incomeRepository.save(income);
     }
 
     @Override

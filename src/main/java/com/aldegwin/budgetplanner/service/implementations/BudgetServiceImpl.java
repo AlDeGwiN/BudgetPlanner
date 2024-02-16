@@ -17,8 +17,8 @@ public class BudgetServiceImpl implements BudgetService {
 
 
     @Override
-    public void save(Budget budget) {
-        budgetRepository.save(budget);
+    public Budget save(Budget budget) {
+        return budgetRepository.save(budget);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public void update(Budget budget) {
-        budgetRepository.save(budget);
+    public Budget update(Budget budget) {
+        return budgetRepository.save(budget);
     }
 
     @Override

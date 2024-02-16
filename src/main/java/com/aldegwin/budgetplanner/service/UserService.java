@@ -5,13 +5,13 @@ import com.aldegwin.budgetplanner.model.User;
 import java.util.Optional;
 
 public interface UserService {
-    void save(User user);
+    User save(User user);
 
     Optional<User> findById(Long id);
 
     Iterable<User> findAll();
 
-    void update(User user);
+    User update(User user);
 
     void delete(User user);
 

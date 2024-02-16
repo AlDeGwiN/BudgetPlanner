@@ -34,13 +34,15 @@ public class Budget {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @OneToMany(mappedBy = "budget")
+    @OneToMany
+    @JoinColumn(name = "budget_id")
     private List<Income> incomes;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany
+    @JoinColumn(name = "budget_id")
     private List<Expense> expenses;
+
+    @OneToMany
+    @JoinColumn(name = "budget_id")
+    private List<BudgetDay> budgetDays;
 }

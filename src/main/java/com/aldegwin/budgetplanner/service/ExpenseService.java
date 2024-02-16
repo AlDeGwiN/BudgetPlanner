@@ -5,13 +5,13 @@ import com.aldegwin.budgetplanner.model.Expense;
 import java.util.Optional;
 
 public interface ExpenseService {
-    void save(Expense expense);
+    Expense save(Expense expense);
 
     Optional<Expense> findById(Long id);
 
     Iterable<Expense> findAll();
 
-    void update(Expense expense);
+    Expense update(Expense expense);
 
     void delete(Expense expense);
 

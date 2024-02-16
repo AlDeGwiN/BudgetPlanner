@@ -14,23 +14,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "income")
-public class Income {
+@Table(name = "budget_day")
+public class BudgetDay {
     @Id
-    @Column(name = "income_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "budget_day_id")
     private Long id;
+
+    @Column(name = "day_date")
+    private LocalDate dayDate;
 
     @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "income_date")
-    private LocalDate incomeDate;
-
     @Column(name = "description")
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "income_type_id")
-    private IncomeType incomeType;
 }

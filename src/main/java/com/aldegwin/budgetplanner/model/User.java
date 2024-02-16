@@ -33,6 +33,7 @@ public class User {
     @Column(name = "last_login_date")
     private LocalDateTime lastLoginDate;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany
+    @JoinColumn(name = "user_id")
     private List<Budget> budgets;
 }
