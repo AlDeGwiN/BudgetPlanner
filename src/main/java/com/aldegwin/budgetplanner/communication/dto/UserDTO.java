@@ -1,6 +1,6 @@
 package com.aldegwin.budgetplanner.communication.dto;
 
-import com.aldegwin.budgetplanner.model.BudgetDay;
+import com.aldegwin.budgetplanner.model.Budget;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +14,5 @@ public class UserDTO {
     private Long id;
     private String username;
     private String email;
-    private List<BudgetDay> budgetDayList;
+    private List<Budget> budgets;
 }

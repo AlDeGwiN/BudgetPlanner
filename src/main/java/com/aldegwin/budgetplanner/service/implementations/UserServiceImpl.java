@@ -1,5 +1,6 @@
 package com.aldegwin.budgetplanner.service.implementations;
 
+import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
 import com.aldegwin.budgetplanner.model.User;
 import com.aldegwin.budgetplanner.repository.UserRepository;
 import com.aldegwin.budgetplanner.service.UserService;
@@ -21,8 +22,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        
+
+        if(optionalUser.isEmpty())
+            throw new DatabaseEntityNotFoundException("User not found");
+
+        return optionalUser.get();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.aldegwin.budgetplanner.service.implementations;
 
+import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
 import com.aldegwin.budgetplanner.model.IncomeType;
 import com.aldegwin.budgetplanner.repository.IncomeTypeRepository;
 import com.aldegwin.budgetplanner.service.IncomeTypeService;
@@ -16,8 +17,13 @@ public class IncomeTypeServiceImpl implements IncomeTypeService {
     }
 
     @Override
-    public Optional<IncomeType> findById(Long id) {
-        return incomeTypeRepository.findById(id);
+    public IncomeType findById(Long id) {
+        Optional<IncomeType> optionalIncome = incomeTypeRepository.findById(id);
+
+        if(optionalIncome.isEmpty())
+            throw new DatabaseEntityNotFoundException("Income type not found");
+
+        return optionalIncome.get();
     }
 
     @Override

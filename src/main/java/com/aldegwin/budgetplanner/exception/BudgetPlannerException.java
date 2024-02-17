@@ -1,13 +1,8 @@
 package com.aldegwin.budgetplanner.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@Builder
+@RequiredArgsConstructor
 public class BudgetPlannerException extends RuntimeException{
-    private String message;
+    private final String message;
 }

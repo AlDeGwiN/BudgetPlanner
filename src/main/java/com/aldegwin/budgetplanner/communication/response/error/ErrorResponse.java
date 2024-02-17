@@ -10,5 +10,4 @@ import lombok.Data;
 @Builder
 public class ErrorResponse implements Response {
     private Error error;
-    private String message;
 }
