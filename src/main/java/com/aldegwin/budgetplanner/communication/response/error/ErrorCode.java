@@ -5,5 +5,5 @@ public enum ErrorCode {
     USERNAME_BUSY,
     EMAIL_BUSY,
     VALIDATION_ERROR,
-    NOT_FOUND
+    NOT_FOUND,
 }
