@@ -6,6 +6,7 @@ import com.aldegwin.budgetplanner.communication.response.error.ErrorCode;
 import com.aldegwin.budgetplanner.communication.response.error.ErrorResponse;
 import com.aldegwin.budgetplanner.communication.response.error.ValidErrorResponse;
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
+import com.aldegwin.budgetplanner.exception.NotUniqueFieldException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(DatabaseEntityNotFoundException.class)
-    public ResponseEntity<Response> handleUserNotFoundException(
+    public ResponseEntity<Response> handleDatabaseEntityNotFoundException(
             DatabaseEntityNotFoundException dataBaseEntityNotFoundException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -58,8 +59,22 @@ public class ApplicationExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(NotUniqueFieldException.class)
+    public ResponseEntity<Response> handleNotUniqueFieldException(
+            NotUniqueFieldException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ValidErrorResponse.builder()
+                        .errors(e.getMessages().stream()
+                                .map(message -> Error.builder()
+                                        .errorCode(ErrorCode.VALIDATION_ERROR)
+                                        .message(message)
+                                        .build()).collect(Collectors.toList()))
+                        .build());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response> handleValidationException(
+    public ResponseEntity<Response> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException methodArgumentNotValidException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)

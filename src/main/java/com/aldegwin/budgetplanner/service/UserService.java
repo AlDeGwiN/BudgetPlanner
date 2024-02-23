@@ -7,11 +7,7 @@ public interface UserService {
 
     User findById(Long id);
 
-    Iterable<User> findAll();
-
     User update(User user);
-
-    void delete(User user);
 
     void deleteById(Long id);
 }
