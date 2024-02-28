@@ -1,10 +1,7 @@
 package com.aldegwin.budgetplanner.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +19,9 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "budget_name")
+    private String name;
+
     @Column(name = "budget_amount")
     private BigDecimal budgetAmount;
 
@@ -33,6 +33,10 @@ public class Budget {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToMany
     @JoinColumn(name = "budget_id")

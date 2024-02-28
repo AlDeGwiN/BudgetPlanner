@@ -3,15 +3,13 @@ package com.aldegwin.budgetplanner.service;
 import com.aldegwin.budgetplanner.model.Budget;
 
 public interface BudgetService {
-    Budget save(Budget budget);
+    Budget save(Long user_id , Budget budget);
 
-    Budget findById(Long id);
+    Budget findById(Long user_id, Long budget_id);
 
-    Iterable<Budget> findAll();
+    Iterable<Budget> findAllByUserId(Long id);
 
-    Budget update(Budget budget);
+    Budget update(Long user_id, Budget updateableBudget);
 
-    void delete(Budget budget);
-
-    void deleteById(Long id);
+    void deleteById(Long user_id, Long budget_id);
 }

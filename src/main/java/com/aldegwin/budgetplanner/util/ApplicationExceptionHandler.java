@@ -1,11 +1,11 @@
 package com.aldegwin.budgetplanner.util;
 
-import com.aldegwin.budgetplanner.communication.response.Response;
 import com.aldegwin.budgetplanner.communication.response.error.Error;
 import com.aldegwin.budgetplanner.communication.response.error.ErrorCode;
 import com.aldegwin.budgetplanner.communication.response.error.ErrorResponse;
 import com.aldegwin.budgetplanner.communication.response.error.ValidErrorResponse;
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
+import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.exception.NotUniqueFieldException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,19 +22,32 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Response> handleRuntimeException(RuntimeException e) {
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException runtimeException) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ErrorResponse.builder()
                         .error(Error.builder()
                                 .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
-                                .message(e.getMessage())
+                                .message(runtimeException.getMessage())
+                                .build())
+                        .build());
+    }
+
+    @ExceptionHandler(IdConflictException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetPlannerException (
+            IdConflictException idConflictException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ErrorResponse.builder()
+                        .error(Error.builder()
+                                .errorCode(ErrorCode.VALIDATION_ERROR)
+                                .message(idConflictException.getMessage())
                                 .build())
                         .build());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<Response> handleNoResourceFoundException(
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
             NoResourceFoundException noResourceFoundException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -47,7 +60,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(DatabaseEntityNotFoundException.class)
-    public ResponseEntity<Response> handleDatabaseEntityNotFoundException(
+    public ResponseEntity<ErrorResponse> handleDatabaseEntityNotFoundException(
             DatabaseEntityNotFoundException dataBaseEntityNotFoundException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -60,21 +73,25 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(NotUniqueFieldException.class)
-    public ResponseEntity<Response> handleNotUniqueFieldException(
+    public ResponseEntity<ValidErrorResponse> handleNotUniqueFieldException(
             NotUniqueFieldException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ValidErrorResponse.builder()
-                        .errors(e.getMessages().stream()
-                                .map(message -> Error.builder()
-                                        .errorCode(ErrorCode.VALIDATION_ERROR)
-                                        .message(message)
-                                        .build()).collect(Collectors.toList()))
+                        .errors(e.getErrors()
+                                .entrySet()
+                                .stream()
+                                .map(entry ->
+                                        Error.builder()
+                                        .errorCode(entry.getKey())
+                                        .message(entry.getValue())
+                                        .build())
+                                .collect(Collectors.toList()))
                         .build());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response> handleMethodArgumentNotValidException(
+    public ResponseEntity<ValidErrorResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException methodArgumentNotValidException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)

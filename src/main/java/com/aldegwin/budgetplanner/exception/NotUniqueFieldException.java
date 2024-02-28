@@ -1,15 +1,16 @@
 package com.aldegwin.budgetplanner.exception;
 
-import lombok.Data;
+import com.aldegwin.budgetplanner.communication.response.error.ErrorCode;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.Map;
 
-@Data
-public class NotUniqueFieldException extends RuntimeException{
-    List<String> messages;
+@Getter
+public class NotUniqueFieldException extends BudgetPlannerException{
+    Map<ErrorCode, String> errors;
 
-    public NotUniqueFieldException(List<String> messages) {
-        this.messages = messages;
+    public NotUniqueFieldException(String message, Map<ErrorCode, String> errors) {
+        super(message);
+        this.errors = errors;
     }
 }
