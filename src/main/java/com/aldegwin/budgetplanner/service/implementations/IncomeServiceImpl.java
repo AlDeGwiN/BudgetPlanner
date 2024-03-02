@@ -21,7 +21,7 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     @Transactional
-    public Income saveIncome(Long user_id, Long budget_id, Income income) {
+    public Income save(Long user_id, Long budget_id, Income income) {
         Budget budget = budgetService.findById(user_id, budget_id);
 
         if(isIncomeDateNotValid(income, budget))

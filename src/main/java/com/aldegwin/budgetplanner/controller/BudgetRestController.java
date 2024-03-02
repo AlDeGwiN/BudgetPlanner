@@ -25,9 +25,9 @@ public class BudgetRestController {
     private final ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<BudgetDTO>> getAllBudgets(@PathVariable("user_id") Long id) {
+    public ResponseEntity<List<BudgetDTO>> getAllBudgets(@PathVariable("user_id") Long user_id) {
         List<BudgetDTO> budgets =
-                ((List<Budget>) budgetService.findAllByUserId(id)).stream()
+                ((List<Budget>) budgetService.findAll(user_id)).stream()
                         .map(this::getBudgetDto)
                         .toList();
         return ResponseEntity.ok()

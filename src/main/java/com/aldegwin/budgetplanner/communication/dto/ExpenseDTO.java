@@ -1,6 +1,6 @@
 package com.aldegwin.budgetplanner.communication.dto;
 
-import com.aldegwin.budgetplanner.model.IncomeType;
+import com.aldegwin.budgetplanner.model.ExpenseType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,19 +16,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IncomeDTO {
+public class ExpenseDTO {
 
     private Long id;
 
-    @Min(value = 1, message = "The income must be greater than or equal to 1")
-    @NotNull(message = "Income amount cannot be null")
+    @Min(value = 1, message = "The expense must be greater than or equal to 1")
+    @NotNull(message = "Expense amount cannot be null")
     private BigDecimal amount;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate incomeDate;
+    private LocalDate expenseDate;
 
     private String description;
 
-    @NotNull(message = "The income type cannot be null")
-    private IncomeType incomeType;
+    @NotNull(message = "The expense type cannot be null")
+    private ExpenseType expenseType;
 }

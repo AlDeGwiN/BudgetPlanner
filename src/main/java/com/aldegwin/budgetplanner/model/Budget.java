@@ -41,8 +41,7 @@ public class Budget {
     @OneToMany(mappedBy = "budget")
     private List<Income> incomes;
 
-    @OneToMany
-    @JoinColumn(name = "budget_id")
+    @OneToMany(mappedBy = "budget")
     private List<Expense> expenses;
 
     @OneToMany

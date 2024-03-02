@@ -31,6 +31,10 @@ public class Expense {
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
+
+    @ManyToOne
     @JoinColumn(name = "expense_type_id")
     private ExpenseType expenseType;
 }

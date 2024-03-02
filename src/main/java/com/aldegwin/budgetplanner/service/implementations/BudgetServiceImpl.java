@@ -47,8 +47,8 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public Iterable<Budget> findAllByUserId(Long id) {
-        User user = userService.findById(id);
+    public Iterable<Budget> findAll(Long user_id) {
+        User user = userService.findById(user_id);
         return user.getBudgets();
     }
 

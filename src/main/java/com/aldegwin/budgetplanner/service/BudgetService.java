@@ -7,7 +7,7 @@ public interface BudgetService {
 
     Budget findById(Long user_id, Long budget_id);
 
-    Iterable<Budget> findAllByUserId(Long id);
+    Iterable<Budget> findAll(Long user_id);
 
     Budget update(Long user_id, Budget budget);
 

@@ -52,7 +52,7 @@ public class IncomeRestController {
         if(incomeDTO.getId() != null)
             throw new IdConflictException("Income ID must be null");
 
-        Income income = incomeService.saveIncome(user_id, budget_id, getIncomeFromDto(incomeDTO));
+        Income income = incomeService.save(user_id, budget_id, getIncomeFromDto(incomeDTO));
         return ResponseEntity.created(
                 uriComponentsBuilder.path("/users/{user_id}/budgets/{budget_id}/incomes/{income_id}")
                         .build(Map.of("user_id", user_id,
@@ -69,6 +69,7 @@ public class IncomeRestController {
                                                   @RequestBody @Valid IncomeDTO incomeDTO) {
         if(!Objects.equals(income_id, incomeDTO.getId()))
             throw new IdConflictException("Income ID in path does not match Income ID in request body");
+
         Income income = incomeService.update(user_id, budget_id, getIncomeFromDto(incomeDTO));
 
         return ResponseEntity.ok()
@@ -77,7 +78,7 @@ public class IncomeRestController {
     }
 
     @DeleteMapping("/{income_id}")
-    public ResponseEntity<Map<String, String>> deleteBudget(@PathVariable("user_id") Long user_id,
+    public ResponseEntity<Map<String, String>> deleteIncome(@PathVariable("user_id") Long user_id,
                                                             @PathVariable("budget_id") Long budget_id,
                                                             @PathVariable("income_id") Long income_id) {
         incomeService.deleteById(user_id, budget_id, income_id);

@@ -1,6 +1,5 @@
 package com.aldegwin.budgetplanner.communication.dto;
 
-import com.aldegwin.budgetplanner.model.Expense;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,5 +38,5 @@ public class BudgetDTO {
 
     private List<IncomeDTO> incomes;
 
-    private List<Expense> expenses;
+    private List<ExpenseDTO> expenses;
 }
