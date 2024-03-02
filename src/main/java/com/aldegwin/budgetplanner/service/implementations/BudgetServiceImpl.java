@@ -1,7 +1,7 @@
 package com.aldegwin.budgetplanner.service.implementations;
 
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
-import com.aldegwin.budgetplanner.exception.IncorrectBudgetDateException;
+import com.aldegwin.budgetplanner.exception.IncorrectDateException;
 import com.aldegwin.budgetplanner.model.Budget;
 import com.aldegwin.budgetplanner.model.User;
 import com.aldegwin.budgetplanner.repository.BudgetRepository;
@@ -24,8 +24,8 @@ public class BudgetServiceImpl implements BudgetService {
     public Budget save(Long user_id, Budget budget) {
         User user = userService.findById(user_id);
 
-        if(!isBudgetDatesValid(budget))
-            throw new IncorrectBudgetDateException("Wrong date");
+        if(isBudgetDatesNotValid(budget))
+            throw new IncorrectDateException("Wrong date");
 
         budget.setUser(user);
 
@@ -57,8 +57,8 @@ public class BudgetServiceImpl implements BudgetService {
     public Budget update(Long user_id, Budget budget) {
         User user = userService.findById(user_id);
 
-        if(!isBudgetDatesValid(budget))
-            throw new IncorrectBudgetDateException("Wrong date");
+        if(isBudgetDatesNotValid(budget))
+            throw new IncorrectDateException("Wrong date");
 
         user.setBudgets(user.getBudgets()
                 .stream()
@@ -73,13 +73,14 @@ public class BudgetServiceImpl implements BudgetService {
     @Transactional
     public void deleteById(Long user_id, Long budget_id) {
         User user = userService.findById(user_id);
-        user.getBudgets().stream()
+        budgetRepository.deleteById(user.getBudgets().stream()
                 .filter(b -> b.getId().equals(budget_id))
                 .findFirst()
-                .ifPresent(budget -> budgetRepository.deleteById(budget.getId()));
+                .orElseThrow(() -> new DatabaseEntityNotFoundException("Budget not found"))
+                .getId());
     }
 
-    private boolean isBudgetDatesValid(Budget budget) {
-        return budget.getStartDate().isBefore(budget.getEndDate());
+    private boolean isBudgetDatesNotValid(Budget budget) {
+        return budget.getEndDate().isBefore(budget.getStartDate());
     }
 }

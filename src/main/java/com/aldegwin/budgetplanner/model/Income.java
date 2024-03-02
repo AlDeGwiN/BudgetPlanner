@@ -31,6 +31,10 @@ public class Income {
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
+
+    @ManyToOne
     @JoinColumn(name = "income_type_id")
     private IncomeType incomeType;
 }

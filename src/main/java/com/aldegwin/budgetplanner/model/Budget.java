@@ -23,7 +23,7 @@ public class Budget {
     private String name;
 
     @Column(name = "budget_amount")
-    private BigDecimal budgetAmount;
+    private BigDecimal amount;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -38,8 +38,7 @@ public class Budget {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany
-    @JoinColumn(name = "budget_id")
+    @OneToMany(mappedBy = "budget")
     private List<Income> incomes;
 
     @OneToMany

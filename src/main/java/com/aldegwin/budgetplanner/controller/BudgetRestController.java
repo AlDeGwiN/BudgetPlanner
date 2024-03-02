@@ -48,6 +48,8 @@ public class BudgetRestController {
     public ResponseEntity<BudgetDTO> createBudget(@RequestBody @Valid BudgetDTO budgetDTO,
                                                  @PathVariable("user_id") Long user_id,
                                                  UriComponentsBuilder uriComponentsBuilder) {
+        if(budgetDTO.getId() != null)
+            throw new IdConflictException("Budget ID must be null");
 
         Budget budget = budgetService.save(user_id, getBudgetFromDto(budgetDTO));
 

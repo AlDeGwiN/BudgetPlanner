@@ -18,13 +18,15 @@ import java.util.List;
 @Builder
 public class UserDTO {
     private Long id;
-    @NotNull(message = "Username cannot be empty")
+
+    @NotNull(message = "Username cannot be null")
     @Size(min = 4, max = 8,
             message = "The length of the username must be from 4 characters to 8")
     @Pattern(regexp = "^[a-zA-Z0-9]+$",
             message = "The username can only consist of Latin letters and numbers")
     private String username;
-    @NotNull(message = "The mail cannot be empty")
+
+    @NotNull(message = "The mail cannot be null")
     @Email(message = "Must have the format of an email address")
     private String email;
     private List<Budget> budgets;

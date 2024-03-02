@@ -6,6 +6,7 @@ import com.aldegwin.budgetplanner.communication.response.error.ErrorResponse;
 import com.aldegwin.budgetplanner.communication.response.error.ValidErrorResponse;
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
 import com.aldegwin.budgetplanner.exception.IdConflictException;
+import com.aldegwin.budgetplanner.exception.IncorrectDateException;
 import com.aldegwin.budgetplanner.exception.NotUniqueFieldException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -68,6 +69,19 @@ public class ApplicationExceptionHandler {
                         .error(Error.builder()
                                 .errorCode(ErrorCode.NOT_FOUND)
                                 .message(dataBaseEntityNotFoundException.getMessage())
+                                .build())
+                        .build());
+    }
+
+    @ExceptionHandler(IncorrectDateException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectIncomeDateException(
+            IncorrectDateException incorrectDateException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ErrorResponse.builder()
+                        .error(Error.builder()
+                                .errorCode(ErrorCode.VALIDATION_ERROR)
+                                .message(incorrectDateException.getMessage())
                                 .build())
                         .build());
     }

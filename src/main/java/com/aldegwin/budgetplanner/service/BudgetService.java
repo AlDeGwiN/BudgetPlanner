@@ -9,7 +9,7 @@ public interface BudgetService {
 
     Iterable<Budget> findAllByUserId(Long id);
 
-    Budget update(Long user_id, Budget updateableBudget);
+    Budget update(Long user_id, Budget budget);
 
     void deleteById(Long user_id, Long budget_id);
 }
