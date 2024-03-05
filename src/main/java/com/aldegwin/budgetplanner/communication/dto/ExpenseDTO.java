@@ -1,6 +1,7 @@
 package com.aldegwin.budgetplanner.communication.dto;
 
-import com.aldegwin.budgetplanner.model.ExpenseType;
+import com.aldegwin.budgetplanner.model.constant.ExpenseType;
+import com.aldegwin.budgetplanner.util.annotations.ValidEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,5 +31,6 @@ public class ExpenseDTO {
     private String description;
 
     @NotNull(message = "The expense type cannot be null")
-    private ExpenseType expenseType;
+    @ValidEnum(enumClass = ExpenseType.class, message = "Incorrect expense type")
+    private String expenseType;
 }

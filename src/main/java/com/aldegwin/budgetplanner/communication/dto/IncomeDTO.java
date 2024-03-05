@@ -1,6 +1,7 @@
 package com.aldegwin.budgetplanner.communication.dto;
 
-import com.aldegwin.budgetplanner.model.IncomeType;
+import com.aldegwin.budgetplanner.model.constant.IncomeType;
+import com.aldegwin.budgetplanner.util.annotations.ValidEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,5 +31,6 @@ public class IncomeDTO {
     private String description;
 
     @NotNull(message = "The income type cannot be null")
+    @ValidEnum(enumClass = IncomeType.class, message = "Incorrect income type")
     private IncomeType incomeType;
 }

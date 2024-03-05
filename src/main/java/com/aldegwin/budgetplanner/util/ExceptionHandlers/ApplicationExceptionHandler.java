@@ -1,13 +1,10 @@
-package com.aldegwin.budgetplanner.util;
+package com.aldegwin.budgetplanner.util.ExceptionHandlers;
 
 import com.aldegwin.budgetplanner.communication.response.error.Error;
 import com.aldegwin.budgetplanner.communication.response.error.ErrorCode;
 import com.aldegwin.budgetplanner.communication.response.error.ErrorResponse;
 import com.aldegwin.budgetplanner.communication.response.error.ValidErrorResponse;
-import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
-import com.aldegwin.budgetplanner.exception.IdConflictException;
-import com.aldegwin.budgetplanner.exception.IncorrectDateException;
-import com.aldegwin.budgetplanner.exception.NotUniqueFieldException;
+import com.aldegwin.budgetplanner.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

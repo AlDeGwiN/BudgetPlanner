@@ -1,5 +1,6 @@
 package com.aldegwin.budgetplanner.model;
 
+import com.aldegwin.budgetplanner.model.constant.ExpenseType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +35,7 @@ public class Expense {
     @JoinColumn(name = "budget_id")
     private Budget budget;
 
-    @ManyToOne
-    @JoinColumn(name = "expense_type_id")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "expense_type")
     private ExpenseType expenseType;
 }
