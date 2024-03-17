@@ -1,5 +1,6 @@
 package com.aldegwin.budgetplanner.service;
 
+import com.aldegwin.budgetplanner.model.Budget;
 import com.aldegwin.budgetplanner.model.Expense;
 
 public interface ExpenseService {
@@ -12,4 +13,6 @@ public interface ExpenseService {
     Expense update(Long user_id, Long budget_id, Expense expense);
 
     void deleteById(Long user_id, Long budget_id, Long expense_id);
+
+    void deleteUnnecessaryExpensesForBudget(Budget budget);
 }

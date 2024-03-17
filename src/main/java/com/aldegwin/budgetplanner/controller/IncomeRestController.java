@@ -3,6 +3,8 @@ package com.aldegwin.budgetplanner.controller;
 import com.aldegwin.budgetplanner.communication.dto.IncomeDTO;
 import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.model.Income;
+import com.aldegwin.budgetplanner.service.BudgetCalculatingService;
+import com.aldegwin.budgetplanner.service.BudgetService;
 import com.aldegwin.budgetplanner.service.IncomeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.Objects;
 public class IncomeRestController {
     private final IncomeService incomeService;
     private final ModelMapper modelMapper;
+    private final BudgetService budgetService;
+    private final BudgetCalculatingService budgetCalculatingService;
 
     @GetMapping
     public ResponseEntity<List<IncomeDTO>> getAllIncomes(@PathVariable("user_id") Long user_id,
@@ -53,6 +57,8 @@ public class IncomeRestController {
             throw new IdConflictException("Income ID must be null");
 
         Income income = incomeService.save(user_id, budget_id, getIncomeFromDto(incomeDTO));
+
+        budgetCalculatingService.calculateBudget(income.getBudget());
         return ResponseEntity.created(
                 uriComponentsBuilder.path("/users/{user_id}/budgets/{budget_id}/incomes/{income_id}")
                         .build(Map.of("user_id", user_id,
@@ -72,6 +78,7 @@ public class IncomeRestController {
 
         Income income = incomeService.update(user_id, budget_id, getIncomeFromDto(incomeDTO));
 
+        budgetCalculatingService.calculateBudget(income.getBudget());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(getIncomeDto(income));
@@ -84,6 +91,8 @@ public class IncomeRestController {
         incomeService.deleteById(user_id, budget_id, income_id);
         String message =
                 String.format("Resource /users/%d/budgets/%d/incomes/%d was deleted", user_id, budget_id, income_id);
+
+        budgetCalculatingService.calculateBudget(budgetService.findById(user_id, budget_id));
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of("message", message));

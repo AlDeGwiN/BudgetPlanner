@@ -4,7 +4,10 @@ package com.aldegwin.budgetplanner.controller;
 import com.aldegwin.budgetplanner.communication.dto.BudgetDTO;
 import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.model.Budget;
+import com.aldegwin.budgetplanner.service.BudgetCalculatingService;
 import com.aldegwin.budgetplanner.service.BudgetService;
+import com.aldegwin.budgetplanner.service.ExpenseService;
+import com.aldegwin.budgetplanner.service.IncomeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +25,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BudgetRestController {
     private final BudgetService budgetService;
+    private final BudgetCalculatingService budgetCalculatingService;
+    private final IncomeService incomeService;
+    private final ExpenseService expenseService;
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -48,10 +54,8 @@ public class BudgetRestController {
     public ResponseEntity<BudgetDTO> createBudget(@RequestBody @Valid BudgetDTO budgetDTO,
                                                  @PathVariable("user_id") Long user_id,
                                                  UriComponentsBuilder uriComponentsBuilder) {
-        if(budgetDTO.getId() != null)
-            throw new IdConflictException("Budget ID must be null");
-
         Budget budget = budgetService.save(user_id, getBudgetFromDto(budgetDTO));
+        budgetCalculatingService.createBudgetDays(budget);
 
         return ResponseEntity
                 .created(uriComponentsBuilder
@@ -69,6 +73,8 @@ public class BudgetRestController {
             throw new IdConflictException("Budget ID in path does not match Budget ID in request body");
 
         Budget budget = budgetService.update(user_id, getBudgetFromDto(budgetDTO));
+        incomeService.deleteUnnecessaryIncomesForBudget(budget);
+        expenseService.deleteUnnecessaryExpensesForBudget(budget);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,6 +85,7 @@ public class BudgetRestController {
     public ResponseEntity<Map<String, String>> deleteBudget(@PathVariable("user_id") Long user_id,
                                                             @PathVariable("budget_id") Long budget_id) {
         budgetService.deleteById(user_id, budget_id);
+
         String message = String.format("Resource /users/%d/budgets/%d was deleted", user_id, budget_id);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

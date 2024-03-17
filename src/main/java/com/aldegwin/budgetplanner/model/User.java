@@ -33,6 +33,6 @@ public class User {
     @Column(name = "last_login_date")
     private LocalDateTime lastLoginDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Budget> budgets;
 }

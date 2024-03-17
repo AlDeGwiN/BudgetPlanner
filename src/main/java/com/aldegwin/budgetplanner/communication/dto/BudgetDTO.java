@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class BudgetDTO {
-
     private Long id;
 
     @NotNull(message = "Budget name cannot be null")
@@ -39,4 +38,6 @@ public class BudgetDTO {
     private List<IncomeDTO> incomes;
 
     private List<ExpenseDTO> expenses;
+
+    private List<BudgetDayDTO> budgetDays;
 }

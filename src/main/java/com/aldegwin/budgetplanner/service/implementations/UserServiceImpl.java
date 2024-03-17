@@ -2,6 +2,7 @@ package com.aldegwin.budgetplanner.service.implementations;
 
 import com.aldegwin.budgetplanner.communication.response.error.ErrorCode;
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
+import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.exception.NotUniqueFieldException;
 import com.aldegwin.budgetplanner.model.User;
 import com.aldegwin.budgetplanner.repository.UserRepository;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -21,9 +21,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User save(User user) {
+        if(user.getId() != null)
+            throw new IdConflictException("User ID must be null");
+
         Map<ErrorCode, String> errors = validateUniqueFields(user);
         if (!errors.isEmpty())
             throw new NotUniqueFieldException("Not unique fields", errors);
+
         return userRepository.save(user);
     }
 
@@ -37,22 +41,25 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User update(User user) {
-        User updatableUser = findById(user.getId());
+        if(user.getId() == null)
+            throw new IdConflictException("User ID must be not null");
+
+        User existingUser = findById(user.getId());
 
         Map<ErrorCode, String> errors = validateUniqueFields(user);
         if (!errors.isEmpty())
-            throw new NotUniqueFieldException("Not unique fileds" , errors);
+            throw new NotUniqueFieldException("Not unique fields" , errors);
 
-        user.setPassword(updatableUser.getPassword());
-        user.setLastLoginDate(LocalDateTime.now());
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
 
-        return userRepository.save(user);
+        return userRepository.save(existingUser);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        userRepository.delete(findById(id));
+        userRepository.deleteById(findById(id).getId());
     }
 
     private Map<ErrorCode, String> validateUniqueFields(User user) {

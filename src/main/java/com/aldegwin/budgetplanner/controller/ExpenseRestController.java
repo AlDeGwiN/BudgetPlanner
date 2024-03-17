@@ -3,6 +3,8 @@ package com.aldegwin.budgetplanner.controller;
 import com.aldegwin.budgetplanner.communication.dto.ExpenseDTO;
 import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.model.Expense;
+import com.aldegwin.budgetplanner.service.BudgetCalculatingService;
+import com.aldegwin.budgetplanner.service.BudgetService;
 import com.aldegwin.budgetplanner.service.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.Objects;
 public class ExpenseRestController {
     private final ExpenseService expenseService;
     private final ModelMapper modelMapper;
+    private final BudgetService budgetService;
+    private final BudgetCalculatingService budgetCalculatingService;
 
     @GetMapping
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses(@PathVariable("user_id") Long user_id,
@@ -53,6 +57,8 @@ public class ExpenseRestController {
             throw new IdConflictException("Expense ID must be null");
 
         Expense expense = expenseService.save(user_id, budget_id, getExpenseFromDto(expenseDTO));
+
+        budgetCalculatingService.calculateBudget(expense.getBudget());
         return ResponseEntity.created(
                 uriComponentsBuilder.path("/users/{user_id}/budgets/{budget_id}/expenses/{expense_id}")
                         .build(Map.of("user_id", user_id,
@@ -60,7 +66,6 @@ public class ExpenseRestController {
                                 "expense_id", expense.getId())))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(getExpenseDto(expense));
-
     }
 
     @PutMapping("/{expense_id}")
@@ -73,6 +78,7 @@ public class ExpenseRestController {
 
         Expense expense = expenseService.update(user_id, budget_id, getExpenseFromDto(expenseDTO));
 
+        budgetCalculatingService.calculateBudget(expense.getBudget());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(getExpenseDto(expense));
@@ -85,6 +91,8 @@ public class ExpenseRestController {
         expenseService.deleteById(user_id, budget_id, expense_id);
         String message =
                 String.format("Resource /users/%d/budgets/%d/expenses/%d was deleted", user_id, budget_id, expense_id);
+
+        budgetCalculatingService.calculateBudget(budgetService.findById(user_id, budget_id));
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of("message", message));

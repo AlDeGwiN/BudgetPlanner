@@ -4,10 +4,7 @@ import com.aldegwin.budgetplanner.model.constant.ExpenseType;
 import com.aldegwin.budgetplanner.util.annotations.ValidEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -18,7 +15,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ExpenseDTO {
-
     private Long id;
 
     @Min(value = 1, message = "The expense must be greater than or equal to 1")

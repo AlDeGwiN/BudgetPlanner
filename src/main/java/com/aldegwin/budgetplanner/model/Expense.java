@@ -2,10 +2,7 @@ package com.aldegwin.budgetplanner.model;
 
 import com.aldegwin.budgetplanner.model.constant.ExpenseType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +13,8 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "expense")
+@ToString(exclude = "budget")
+@EqualsAndHashCode(exclude = "budget")
 public class Expense {
     @Id
     @Column(name = "expense_id")

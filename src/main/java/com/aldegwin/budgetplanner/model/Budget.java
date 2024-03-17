@@ -13,6 +13,8 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "budget")
+@ToString(exclude = "user")
+@EqualsAndHashCode(exclude = "user")
 public class Budget {
     @Id
     @Column(name = "budget_id")
@@ -38,13 +40,13 @@ public class Budget {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Income> incomes;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Expense> expenses;
 
-    @OneToMany
-    @JoinColumn(name = "budget_id")
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+    @OrderBy("dayDate asc")
     private List<BudgetDay> budgetDays;
 }

@@ -1,6 +1,7 @@
 package com.aldegwin.budgetplanner.service.implementations;
 
 import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
+import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.exception.IncorrectDateException;
 import com.aldegwin.budgetplanner.model.Budget;
 import com.aldegwin.budgetplanner.model.Income;
@@ -11,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,18 +24,17 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     @Transactional
     public Income save(Long user_id, Long budget_id, Income income) {
+        if(income.getId() != null)
+            throw new IdConflictException("Income ID must be null");
+
         Budget budget = budgetService.findById(user_id, budget_id);
 
         if(isIncomeDateNotValid(income, budget))
             throw new IncorrectDateException("The entered date is not included in the budget deadline");
 
-        budget.getIncomes().add(income);
         income.setBudget(budget);
 
-        incomeRepository.save(income);
-        budgetService.update(user_id, budget);
-
-        return income;
+        return incomeRepository.save(income);
     }
 
     @Override
@@ -51,21 +52,20 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     @Transactional
     public Income update(Long user_id, Long budget_id, Income income) {
-        Budget budget = budgetService.findById(user_id, budget_id);
+        if(income.getId() == null)
+            throw new IdConflictException("Income ID must be not null");
 
-        if (isIncomeDateNotValid(income, budget))
+        Income existingIncome = findById(user_id, budget_id, income.getId());
+
+        if (isIncomeDateNotValid(income, existingIncome.getBudget()))
             throw new IncorrectDateException("The entered date is not included in the budget deadline");
 
-        budget.setIncomes(budget.getIncomes().stream()
-                .map(i -> i.getId().equals(income.getId()) ? income : i)
-                .collect(Collectors.toList()));
+        existingIncome.setIncomeDate(income.getIncomeDate());
+        existingIncome.setIncomeType(income.getIncomeType());
+        existingIncome.setAmount(income.getAmount());
+        existingIncome.setDescription(income.getDescription());
 
-        income.setBudget(budget);
-
-        incomeRepository.save(income);
-        budgetService.update(user_id, budget);
-
-        return income;
+        return incomeRepository.save(existingIncome);
     }
 
     @Override
@@ -76,6 +76,20 @@ public class IncomeServiceImpl implements IncomeService {
                 .filter(i -> i.getId().equals(income_id))
                 .findFirst()
                 .orElseThrow(() -> new DatabaseEntityNotFoundException("Income not found")).getId());
+    }
+
+    @Override
+    @Transactional
+    public void deleteUnnecessaryIncomesForBudget(Budget budget) {
+        List<Income> oldIncomes = budget.getIncomes();
+        List<Income> newIncomes = new ArrayList<>();
+        for(Income income : oldIncomes) {
+            if(isIncomeDateNotValid(income, budget))
+                deleteById(budget.getUser().getId(), budget.getId(), income.getId());
+            else
+                newIncomes.add(income);
+        }
+        budget.setIncomes(newIncomes);
     }
 
     private boolean isIncomeDateNotValid(Income income, Budget budget) {

@@ -1,10 +1,7 @@
 package com.aldegwin.budgetplanner.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "budget_day")
+@ToString(exclude = "budget")
+@EqualsAndHashCode(exclude = "budget")
 public class BudgetDay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +25,10 @@ public class BudgetDay {
 
     @Column(name = "amount")
     private BigDecimal amount;
+
+    @ManyToOne
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
 
     @Column(name = "description")
     private String description;
