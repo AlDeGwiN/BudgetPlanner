@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class ValidErrorResponse {
+public class ErrorsResponse {
     private List<Error> errors;
 }
