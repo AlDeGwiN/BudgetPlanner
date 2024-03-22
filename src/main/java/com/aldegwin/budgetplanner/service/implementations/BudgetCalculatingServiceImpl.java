@@ -6,6 +6,7 @@ import com.aldegwin.budgetplanner.model.Expense;
 import com.aldegwin.budgetplanner.model.Income;
 import com.aldegwin.budgetplanner.service.BudgetDayService;
 import com.aldegwin.budgetplanner.service.BudgetCalculatingService;
+import com.aldegwin.budgetplanner.util.comporators.BudgetDayComporator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,15 +42,7 @@ public class BudgetCalculatingServiceImpl implements BudgetCalculatingService {
             dateIterator = dateIterator.plusDays(1);
         }
 
-        budgetDays.sort((bd1, bd2) -> {
-            LocalDate bd1Date = bd1.getDayDate();
-            LocalDate bd2Date = bd2.getDayDate();
-            if (bd1Date.isAfter(bd2Date))
-                return 1;
-            else if (bd1Date.isBefore(bd2Date))
-                return -1;
-            return 0;
-        });
+        budgetDays.sort(new BudgetDayComporator());
 
         return budgetDays;
     }
@@ -82,6 +75,9 @@ public class BudgetCalculatingServiceImpl implements BudgetCalculatingService {
             budgetDay.setAmount(currentDayAmount);
             budgetDayService.update(budgetDay);
         }
+
+        budgetDays.sort(new BudgetDayComporator());
+
         budget.setBudgetDays(budgetDays);
     }
 
@@ -122,15 +118,7 @@ public class BudgetCalculatingServiceImpl implements BudgetCalculatingService {
             }
         }
 
-        newBudgetDays.sort((bd1, bd2) -> {
-            LocalDate bd1Date = bd1.getDayDate();
-            LocalDate bd2Date = bd2.getDayDate();
-            if (bd1Date.isAfter(bd2Date))
-                return 1;
-            else if (bd1Date.isBefore(bd2Date))
-                return -1;
-            return 0;
-        });
+        newBudgetDays.sort(new BudgetDayComporator());
 
         budget.setBudgetDays(newBudgetDays);
     }

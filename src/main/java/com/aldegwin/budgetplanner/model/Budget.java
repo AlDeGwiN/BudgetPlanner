@@ -41,9 +41,11 @@ public class Budget {
     private User user;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+    @OrderBy("incomeDate asc")
     private List<Income> incomes;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+    @OrderBy("expenseDate asc")
     private List<Expense> expenses;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)

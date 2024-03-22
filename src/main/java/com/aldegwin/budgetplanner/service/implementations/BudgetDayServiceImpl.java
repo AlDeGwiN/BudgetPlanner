@@ -1,5 +1,6 @@
 package com.aldegwin.budgetplanner.service.implementations;
 
+import com.aldegwin.budgetplanner.exception.DatabaseEntityNotFoundException;
 import com.aldegwin.budgetplanner.exception.IdConflictException;
 import com.aldegwin.budgetplanner.model.BudgetDay;
 import com.aldegwin.budgetplanner.repository.BudgetDayRepository;
@@ -26,7 +27,15 @@ public class BudgetDayServiceImpl implements BudgetDayService {
     public BudgetDay update(BudgetDay budgetDay) {
         if(budgetDay.getId() == null)
             throw new IdConflictException("Budget day ID must be not null");
-        return budgetDayRepository.save(budgetDay);
+
+        BudgetDay existingBudget = budgetDayRepository.findById(budgetDay.getId())
+                .orElseThrow(() -> new DatabaseEntityNotFoundException("Budget day not found"));
+
+        existingBudget.setDayDate(budgetDay.getDayDate());
+        existingBudget.setAmount(budgetDay.getAmount());
+        existingBudget.setDescription(budgetDay.getDescription());
+
+        return budgetDayRepository.save(existingBudget);
     }
 
     @Override

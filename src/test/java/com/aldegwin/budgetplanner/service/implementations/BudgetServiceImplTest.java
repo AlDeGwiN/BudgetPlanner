@@ -9,7 +9,6 @@ import com.aldegwin.budgetplanner.model.User;
 import com.aldegwin.budgetplanner.repository.BudgetRepository;
 import com.aldegwin.budgetplanner.service.BudgetCalculatingService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -237,8 +236,7 @@ class BudgetServiceImplTest {
     }
 
     @Test
-    @Disabled
-    void givenUserIdAndBudget_whenUpdate_returnBudget() {
+    void givenUserIdAndBudget_whenUpdate_returnBudget_oldBudgetPeriod() {
         budget.setId(1L);
 
         Budget existingBudget = Budget.builder()
@@ -246,8 +244,8 @@ class BudgetServiceImplTest {
                 .user(user)
                 .name("old_budget")
                 .amount(new BigDecimal(200))
-                .startDate(LocalDate.of(2023,1,1))
-                .endDate(LocalDate.of(2023, 1, 31))
+                .startDate(LocalDate.of(2024,1,1))
+                .endDate(LocalDate.of(2024, 1, 31))
                 .description("old_budgetDescription")
                 .incomes(Collections.emptyList())
                 .expenses(Collections.emptyList())
@@ -285,10 +283,133 @@ class BudgetServiceImplTest {
             updated.setBudgetDays(b.getBudgetDays());
             return updated;
         });
+        doNothing().when(budgetCalculatingService).calculateBudget(any(Budget.class));
 
         Budget result = budgetService.update(1L, budget);
 
         assertEquals(expected, result);
+        verify(budgetCalculatingService, never()).reformatBudgetDays(any(Budget.class));
+        verify(budgetCalculatingService, times(1)).calculateBudget(any(Budget.class));
+        verify(userService, times(1)).findById(1L);
+        verify(budgetRepository, times(1)).save(same(existingBudget));
+    }
+
+    @Test
+    void givenUserIdAndBudget_whenUpdate_returnBudget_newStartDateNotEqualOldStartDate() {
+        budget.setId(1L);
+
+        Budget existingBudget = Budget.builder()
+                .id(1L)
+                .user(user)
+                .name("old_budget")
+                .amount(new BigDecimal(200))
+                .startDate(LocalDate.of(2023,1,1))
+                .endDate(LocalDate.of(2024, 1, 31))
+                .description("old_budgetDescription")
+                .incomes(Collections.emptyList())
+                .expenses(Collections.emptyList())
+                .budgetDays(Collections.emptyList())
+                .build();
+
+        user.setBudgets(List.of(existingBudget));
+
+        Budget expected = Budget.builder()
+                .id(1L)
+                .user(user)
+                .name("budget")
+                .amount(new BigDecimal(100))
+                .startDate(LocalDate.of(2024,1,1))
+                .endDate(LocalDate.of(2024, 1, 31))
+                .description("budgetDescription")
+                .incomes(Collections.emptyList())
+                .expenses(Collections.emptyList())
+                .budgetDays(Collections.emptyList())
+                .build();
+
+
+        when(userService.findById(1L)).thenReturn(user);
+        when(budgetRepository.save(same(existingBudget))).thenAnswer(invocation -> {
+            Budget b = invocation.getArgument(0, Budget.class);
+            Budget updated = Budget.builder().id(user.getId()).build();
+            updated.setUser(user);
+            updated.setName(b.getName());
+            updated.setAmount(b.getAmount());
+            updated.setStartDate(b.getStartDate());
+            updated.setEndDate(b.getEndDate());
+            updated.setDescription(b.getDescription());
+            updated.setIncomes(b.getIncomes());
+            updated.setExpenses(b.getExpenses());
+            updated.setBudgetDays(b.getBudgetDays());
+            return updated;
+        });
+        doNothing().when(budgetCalculatingService).reformatBudgetDays(any(Budget.class));
+        doNothing().when(budgetCalculatingService).calculateBudget(any(Budget.class));
+
+        Budget result = budgetService.update(1L, budget);
+
+        assertEquals(expected, result);
+        verify(budgetCalculatingService, times(1)).reformatBudgetDays(any(Budget.class));
+        verify(budgetCalculatingService, times(1)).calculateBudget(any(Budget.class));
+        verify(userService, times(1)).findById(1L);
+        verify(budgetRepository, times(1)).save(same(existingBudget));
+    }
+
+    @Test
+    void givenUserIdAndBudget_whenUpdate_returnBudget_newEndDateNotEqualOldEndDate() {
+        budget.setId(1L);
+
+        Budget existingBudget = Budget.builder()
+                .id(1L)
+                .user(user)
+                .name("old_budget")
+                .amount(new BigDecimal(200))
+                .startDate(LocalDate.of(2024,1,1))
+                .endDate(LocalDate.of(2025, 1, 31))
+                .description("old_budgetDescription")
+                .incomes(Collections.emptyList())
+                .expenses(Collections.emptyList())
+                .budgetDays(Collections.emptyList())
+                .build();
+
+        user.setBudgets(List.of(existingBudget));
+
+        Budget expected = Budget.builder()
+                .id(1L)
+                .user(user)
+                .name("budget")
+                .amount(new BigDecimal(100))
+                .startDate(LocalDate.of(2024,1,1))
+                .endDate(LocalDate.of(2024, 1, 31))
+                .description("budgetDescription")
+                .incomes(Collections.emptyList())
+                .expenses(Collections.emptyList())
+                .budgetDays(Collections.emptyList())
+                .build();
+
+
+        when(userService.findById(1L)).thenReturn(user);
+        when(budgetRepository.save(same(existingBudget))).thenAnswer(invocation -> {
+            Budget b = invocation.getArgument(0, Budget.class);
+            Budget updated = Budget.builder().id(user.getId()).build();
+            updated.setUser(user);
+            updated.setName(b.getName());
+            updated.setAmount(b.getAmount());
+            updated.setStartDate(b.getStartDate());
+            updated.setEndDate(b.getEndDate());
+            updated.setDescription(b.getDescription());
+            updated.setIncomes(b.getIncomes());
+            updated.setExpenses(b.getExpenses());
+            updated.setBudgetDays(b.getBudgetDays());
+            return updated;
+        });
+        doNothing().when(budgetCalculatingService).reformatBudgetDays(any(Budget.class));
+        doNothing().when(budgetCalculatingService).calculateBudget(any(Budget.class));
+
+        Budget result = budgetService.update(1L, budget);
+
+        assertEquals(expected, result);
+        verify(budgetCalculatingService, times(1)).reformatBudgetDays(any(Budget.class));
+        verify(budgetCalculatingService, times(1)).calculateBudget(any(Budget.class));
         verify(userService, times(1)).findById(1L);
         verify(budgetRepository, times(1)).save(same(existingBudget));
     }
